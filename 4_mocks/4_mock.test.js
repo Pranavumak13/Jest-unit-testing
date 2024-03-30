@@ -102,6 +102,11 @@ describe('Mocks and spies', () => {
 
 //////////////////////// Spy on the url
 
+
+afterEach(()=>{
+    jest.restoreAllMocks();
+})
+
 const axios = require('axios');
 
 const fetchTodo = async (id) => {
@@ -125,4 +130,27 @@ describe('SPy', () => {
 })
 
 
+const fTodos = async (id) =>{
+    try{
+        const results = await fetch(`https://jsonplaceholder.typicode.com/todos/${id}`)
+        const data = await results.json()
+        return data; 
+    }
+    catch(error){
+        console.log(`Error: ${error}`);
+    } 
+}
+// fTodos(1)
 
+describe('spying on fetch',()=>{
+    it('SPy on fetch function', async ()=>{
+        jest.spyOn(global, 'fetch').mockResolvedValueOnce({
+            json: ()=> Promise.resolve({
+                id:1,
+                todos: "Work"
+            })
+        })
+        const res = await fTodos(1)
+        expect(res.todos).toBe("Work")
+    })
+})
